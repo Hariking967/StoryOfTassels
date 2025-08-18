@@ -1,5 +1,4 @@
-import { uuid } from "drizzle-orm/gel-core";
-import { pgTable, text, timestamp, boolean } from "drizzle-orm/pg-core";
+import { pgTable, text, timestamp, boolean, date } from "drizzle-orm/pg-core";
 
 export const user = pgTable("user", {
   id: text("id").primaryKey(),
@@ -67,4 +66,13 @@ export const images = pgTable("images", {
   createdAt: timestamp("created_at")
     .$defaultFn(() => /* @__PURE__ */ new Date())
     .notNull(),
+});
+
+export const bookings = pgTable("bookings", {
+  name: text("name").notNull(),
+  phoneNumber: text("phoneNumber").notNull(),
+  email: text("email").notNull(),
+  typeOfService: text("typeOfService").notNull(),
+  date: date("date").notNull(),
+  completed: boolean("completed").notNull(),
 });

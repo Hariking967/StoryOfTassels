@@ -36,26 +36,7 @@ export default function BookingForm() {
     resolver: zodResolver(formSchema),
   });
 
-  const onSubmit = (data: z.infer<typeof formSchema>) => {
-    // setError(null);
-    // setPending(true);
-    // authClient.signIn.email(
-    //   {
-    //     email: data.email,
-    //     password: data.password,
-    //     callbackURL: "/",
-    //   },
-    //   {
-    //     onSuccess: () => {
-    //       setPending(false);
-    //       router.push("/");
-    //     },
-    //     onError: ({ error }) => {
-    //       setError(error.message);
-    //     },
-    //   }
-    // );
-  };
+  const onSubmit = (data: z.infer<typeof formSchema>) => {};
 
   return (
     <div className="flex flex-col items-center gap-6 mt-10 pt-10 h-screen bg-gradient-to-br from-[#eac24b] via-[#D4AF37] to-[#57250b]">
@@ -120,7 +101,7 @@ export default function BookingForm() {
                           <FormLabel>Phone Number</FormLabel>
                           <FormControl>
                             <Input
-                              type="number"
+                              type="text"
                               placeholder="1234567890"
                               {...field}
                             ></Input>
