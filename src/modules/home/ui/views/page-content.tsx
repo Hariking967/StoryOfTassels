@@ -20,11 +20,27 @@ export default function MainContent() {
         <br />
         <Button
           asChild
-          className="bg-[#FFB22C] text-white text-xl font-semibold px-8 py-3 rounded-full shadow-lg hover:bg-[#e0a026] transition-all duration-300"
+          className="bg-[#57250b] text-white text-xl font-semibold px-8 py-3 rounded-full shadow-lg hover:bg-[#97551c] transition-all duration-300 border border-[#eac24b]"
         >
           <Link href="/booking">Book Now</Link>
         </Button>
       </div>
+      <div className="flex flex-col items-center mt-8">
+        <h1 className="text-4xl text-white text-center">Our Projects</h1>
+        <hr className="w-48 border-t-2 border-white mt-2" />
+        <Birthday />
+        <HouseWarming />
+        <Haldi />
+        <BabyShower />
+      </div>
+    </div>
+  );
+}
+
+export function Birthday() {
+  return (
+    <div>
+      <h2>Birthday</h2>
     </div>
   );
 }
