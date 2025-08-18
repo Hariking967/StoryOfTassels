@@ -1,3 +1,4 @@
+import { uuid } from "drizzle-orm/gel-core";
 import { pgTable, text, timestamp, boolean } from "drizzle-orm/pg-core";
 
 export const user = pgTable("user", {
@@ -58,4 +59,12 @@ export const verification = pgTable("verification", {
   updatedAt: timestamp("updated_at").$defaultFn(
     () => /* @__PURE__ */ new Date()
   ),
+});
+
+export const images = pgTable("images", {
+  category: text("category"),
+  imagepath: text("filename").notNull(),
+  createdAt: timestamp("created_at")
+    .$defaultFn(() => /* @__PURE__ */ new Date())
+    .notNull(),
 });

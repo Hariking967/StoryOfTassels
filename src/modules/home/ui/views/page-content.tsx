@@ -44,3 +44,27 @@ export function Birthday() {
     </div>
   );
 }
+
+export function HouseWarming() {
+  return (
+    <div>
+      <h2>House Warming</h2>
+    </div>
+  );
+}
+
+export function Haldi() {
+  return (
+    <div>
+      <h2>Haldi</h2>
+    </div>
+  );
+}
+
+export function BabyShower() {
+  return (
+    <div>
+      <h2>Baby Shower</h2>
+    </div>
+  );
+}
