@@ -17,6 +17,7 @@ export const bookingRouter = createTRPCRouter({
           invalid_type_error: "Phone number is required",
         }),
         email: z.string().email("Invalid email address"),
+        loggedin_email: z.string().email("Invalid email address"),
         typeOfService: z.string().min(1, "Type of service is required"),
         date: z.string().min(1, "Name is required"),
         status: z.string().default("Requested"),

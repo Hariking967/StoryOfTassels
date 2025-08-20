@@ -1,4 +1,5 @@
 import { pgTable, text, timestamp, boolean, date } from "drizzle-orm/pg-core";
+import { nanoid } from "nanoid";
 
 export const user = pgTable("user", {
   id: text("id").primaryKey(),
@@ -69,10 +70,14 @@ export const images = pgTable("images", {
 });
 
 export const bookings = pgTable("bookings", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => nanoid()),
   name: text("name").notNull(),
   phoneNumber: text("phoneNumber").notNull(),
+  loggedin_email: text("loggedin_email").notNull(),
   email: text("email").notNull(),
   typeOfService: text("typeOfService").notNull(),
   date: date("date").notNull(),
-  status: text("completed").notNull(),
+  status: text("status").notNull(),
 });
