@@ -74,5 +74,5 @@ export const bookings = pgTable("bookings", {
   email: text("email").notNull(),
   typeOfService: text("typeOfService").notNull(),
   date: date("date").notNull(),
-  completed: boolean("completed").notNull(),
+  status: text("completed").notNull(),
 });

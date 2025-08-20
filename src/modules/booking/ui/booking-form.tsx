@@ -19,10 +19,12 @@ import {
 import { Alert, AlertTitle } from "@/components/ui/alert";
 import { OctagonAlertIcon, OctagonIcon } from "lucide-react";
 import Link from "next/link";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useTRPC } from "@/trpc/client";
 
 const formSchema = z.object({
   name: z.string().min(1, "Name is required"),
-  phoneNumber: z.number({ invalid_type_error: "Phone number is required" }),
+  phoneNumber: z.string({ invalid_type_error: "Phone number is required" }),
   email: z.string().email("Invalid email address"),
   typeOfService: z.string().min(1, "Type of service is required"),
   date: z.string().min(1, "Name is required"),
@@ -32,11 +34,28 @@ export default function BookingForm() {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
+  const trpc = useTRPC();
+  const queryClient = useQueryClient();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
   });
-
-  const onSubmit = (data: z.infer<typeof formSchema>) => {};
+  const createBooking = useMutation(
+    trpc.bookings.create.mutationOptions({
+      onSuccess: async () => {
+        await queryClient.invalidateQueries(
+          trpc.bookings.getMany.queryOptions()
+        );
+        router.push("/booking/success");
+      },
+      onError: (error) => {
+        console.error(error);
+        router.push("/booking/failed");
+      },
+    })
+  );
+  const onSubmit = (data: z.infer<typeof formSchema>) => {
+    createBooking.mutate(data);
+  };
 
   return (
     <div className="flex flex-col items-center gap-6 mt-10 pt-10 h-screen bg-gradient-to-br from-[#eac24b] via-[#D4AF37] to-[#57250b]">

@@ -6,11 +6,7 @@ import { z } from "zod";
 
 export const bookingRouter = createTRPCRouter({
   getMany: protectedProcedure.query(async ({ ctx, input }) => {
-    const data = await db
-      .select()
-      .from(bookings)
-      .where(eq(bookings.completed, false))
-      .orderBy(desc(bookings.date));
+    const data = await db.select().from(bookings).orderBy(desc(bookings.date));
     return data;
   }),
   create: protectedProcedure
@@ -23,7 +19,7 @@ export const bookingRouter = createTRPCRouter({
         email: z.string().email("Invalid email address"),
         typeOfService: z.string().min(1, "Type of service is required"),
         date: z.string().min(1, "Name is required"),
-        completed: z.boolean().optional().default(false),
+        status: z.string().default("Requested"),
       })
     )
     .mutation(async ({ ctx, input }) => {
