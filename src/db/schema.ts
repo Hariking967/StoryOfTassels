@@ -78,6 +78,7 @@ export const bookings = pgTable("bookings", {
   loggedin_email: text("loggedin_email").notNull(),
   email: text("email").notNull(),
   typeOfService: text("typeOfService").notNull(),
-  date: date("date").notNull(),
-  status: text("status").notNull(),
+  date: text("date").notNull(),
+  status: text("status").notNull().default("Requested"),
+  price: text("price").notNull(),
 });

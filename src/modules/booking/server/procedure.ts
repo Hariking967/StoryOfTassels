@@ -16,11 +16,12 @@ export const bookingRouter = createTRPCRouter({
         phoneNumber: z.string({
           invalid_type_error: "Phone number is required",
         }),
-        email: z.string().email("Invalid email address"),
         loggedin_email: z.string().email("Invalid email address"),
+        email: z.string().email("Invalid email address"),
         typeOfService: z.string().min(1, "Type of service is required"),
         date: z.string().min(1, "Name is required"),
         status: z.string().default("Requested"),
+        price: z.string().min(1, "Price is required"),
       })
     )
     .mutation(async ({ ctx, input }) => {
@@ -29,5 +30,20 @@ export const bookingRouter = createTRPCRouter({
         .values({ ...input })
         .returning();
       return newBooking;
+    }),
+  updatePrice: protectedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        price: z.string().min(1, "Price is required"),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      const [updatedBooking] = await db
+        .update(bookings)
+        .set({ price: input.price })
+        .where(eq(bookings.id, input.id))
+        .returning();
+      return updatedBooking;
     }),
 });

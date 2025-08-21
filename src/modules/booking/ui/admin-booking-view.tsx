@@ -14,6 +14,9 @@ export default function AdminBookingView() {
   const completed_data: bookType = [];
   const request_data: bookType = [];
   const pending_data: bookType = [];
+  // const onAccept = async (id: string, price:string)  {
+
+  // }
   data.forEach((d) => {
     if (d.status == "Requested") {
       request_data.push(d);

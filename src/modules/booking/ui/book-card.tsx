@@ -7,6 +7,7 @@ interface Props {
   name: string;
   service: string;
   date: string;
+  price?: string;
   onAccept?: () => void;
   onReject?: () => void;
   onComplete?: () => void;
@@ -17,20 +18,40 @@ export default function BookCard({
   name,
   service,
   date,
+  price,
   onAccept,
   onReject,
   onComplete,
 }: Props) {
   return (
     <Card className="w-full flex flex-row p-4 mb-4 shadow-md items-center">
+      {/* Left section */}
       <div className="flex flex-col flex-1 items-start">
         <span className="font-semibold text-lg">{name}</span>
         <span className="text-gray-600">{service}</span>
         <span className="text-gray-400 text-sm">{date}</span>
       </div>
-      <div className="flex gap-2">
+      {/* Middle section: Price */}
+      {price && (
+        <div className="flex flex-col items-center mx-8">
+          <span className="font-medium text-base text-gray-700">Price</span>
+          <span className="text-lg text-green-700 font-bold">{price}</span>
+        </div>
+      )}
+      {/* Right section: Buttons/Inputs */}
+      <div className="flex gap-2 items-center">
         {type === "request" && (
           <>
+            {!price && (
+              <>
+                <span className="mr-2 font-medium">Price</span>
+                <input
+                  type="text"
+                  className="border rounded px-2 py-1 w-24 mr-2"
+                  placeholder="Enter price"
+                />
+              </>
+            )}
             <Button
               variant="outline"
               className="border-green-600 text-green-700 hover:bg-green-50"
