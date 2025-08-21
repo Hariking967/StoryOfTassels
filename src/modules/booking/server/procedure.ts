@@ -5,7 +5,7 @@ import { desc, eq } from "drizzle-orm";
 import { z } from "zod";
 
 export const bookingRouter = createTRPCRouter({
-  getMany: protectedProcedure.query(async ({ ctx, input }) => {
+  getMany: protectedProcedure.query(async () => {
     const data = await db.select().from(bookings).orderBy(desc(bookings.date));
     return data;
   }),
@@ -24,7 +24,7 @@ export const bookingRouter = createTRPCRouter({
         price: z.string().min(1, "Price is required"),
       })
     )
-    .mutation(async ({ ctx, input }) => {
+    .mutation(async ({ input }) => {
       const [newBooking] = await db
         .insert(bookings)
         .values({ ...input })
@@ -38,7 +38,7 @@ export const bookingRouter = createTRPCRouter({
         price: z.string().min(1, "Price is required"),
       })
     )
-    .mutation(async ({ ctx, input }) => {
+    .mutation(async ({ input }) => {
       const [updatedBooking] = await db
         .update(bookings)
         .set({ price: input.price })

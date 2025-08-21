@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
-import { FaGithub, FaGoogle } from "react-icons/fa";
+import { FaGoogle } from "react-icons/fa";
 import {
   Form,
   FormControl,
@@ -18,8 +18,9 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Alert, AlertTitle } from "@/components/ui/alert";
-import { OctagonAlertIcon, OctagonIcon } from "lucide-react";
+import { OctagonAlertIcon } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 
 import { authClient } from "@/lib/auth-client";
 
@@ -186,11 +187,13 @@ export default function SignInView() {
             </form>
           </Form>
           <div className="bg-gradient-to-br from-[#8B5E3C] via-[#D4AF37] to-[#000000] relative hidden md:flex flex-col gap-y-4 items-center justify-center h-full w-full p-20">
-            <img
+            <Image
+              width={150}
+              height={150}
               src="/sslogo.png"
               alt="SOTlogo"
               className="h-[150px] w-[150px] rounded-full overflow-hidden"
-            ></img>
+            />
             <p className="text-6xl font-semibold text-white pauline">
               Story Of Tassels
             </p>

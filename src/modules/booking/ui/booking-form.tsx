@@ -556,6 +556,17 @@ export default function BookingForm() {
   const { data: bookings } = useSuspenseQuery(
     trpc.bookings.getMany.queryOptions()
   );
+  type bookingType = {
+    name: string;
+    phoneNumber: string;
+    email: string;
+    typeOfService: string;
+    date: string;
+    status: string;
+    id: string;
+    loggedin_email: string;
+    price: string;
+  };
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -650,11 +661,11 @@ export default function BookingForm() {
         </p>
         {bookings
           ?.filter(
-            (d: any) =>
+            (d: bookingType) =>
               d.loggedin_email ===
               (session?.user.email ?? "nosession@gmail.com")
           )
-          .map((d: any, idx: number) => (
+          .map((d: bookingType, idx: number) => (
             <Card
               key={d.id ?? idx}
               className="flex flex-row items-center justify-between p-4"
