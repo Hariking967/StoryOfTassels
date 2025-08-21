@@ -1,19 +1,24 @@
+"use client";
+
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { useState } from "react";
 
 interface Props {
+  id: string;
   type: "completed" | "pending" | "request";
   name: string;
   service: string;
   date: string;
   price?: string;
-  onAccept?: () => void;
-  onReject?: () => void;
-  onComplete?: () => void;
+  onAccept: (id: string, price: string) => void;
+  onReject: (id: string, price: string) => void;
+  onComplete: (id: string) => void;
 }
 
 export default function BookCard({
+  id,
   type,
   name,
   service,
@@ -23,6 +28,7 @@ export default function BookCard({
   onReject,
   onComplete,
 }: Props) {
+  const [inputprice, setInputrice] = useState("--");
   return (
     <Card className="w-full flex flex-row p-4 mb-4 shadow-md items-center">
       {/* Left section */}
@@ -49,20 +55,21 @@ export default function BookCard({
                   type="text"
                   className="border rounded px-2 py-1 w-24 mr-2"
                   placeholder="Enter price"
+                  onChange={(e) => setInputrice(e.target.value)}
                 />
               </>
             )}
             <Button
               variant="outline"
               className="border-green-600 text-green-700 hover:bg-green-50"
-              onClick={onAccept}
+              onClick={() => onAccept(id, inputprice)}
             >
               Accept
             </Button>
             <Button
               variant="outline"
               className="border-red-600 text-red-700 hover:bg-red-50 mr-2 ml-2"
-              onClick={onReject}
+              onClick={() => onReject(id, inputprice)}
             >
               Reject
             </Button>
@@ -72,7 +79,7 @@ export default function BookCard({
           <Button
             variant="outline"
             className="border-yellow-600 text-yellow-700 hover:bg-yellow-50"
-            onClick={onComplete}
+            onClick={() => onComplete(id)}
           >
             Completed
           </Button>

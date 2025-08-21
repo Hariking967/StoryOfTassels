@@ -13,6 +13,14 @@ export default async function BookingPage() {
   if (!session) {
     redirect("auth/sign-in");
   }
+  // if (session.user.email == process.env.ADMIN_EMAIL) {
+  //   return (
+  //     <Suspense fallback={<div>Loading bookings...</div>}>
+  //       <AdminBookingView />
+  //     </Suspense>
+  //   );
+  // }
+  // return <BookingForm />;
   if (session.user.email == "supriya.pdy@gmail.com") {
     return (
       <Suspense fallback={<div>Loading bookings...</div>}>

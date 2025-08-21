@@ -3,7 +3,11 @@
 import React, { useState } from "react";
 import { useTRPC } from "@/trpc/client";
 import BookCard from "./book-card";
-import { useSuspenseQuery } from "@tanstack/react-query";
+import {
+  useMutation,
+  useQueryClient,
+  useSuspenseQuery,
+} from "@tanstack/react-query";
 
 export default function AdminBookingView() {
   const trpc = useTRPC();
@@ -14,20 +18,53 @@ export default function AdminBookingView() {
   const completed_data: bookType = [];
   const request_data: bookType = [];
   const pending_data: bookType = [];
-  // const onAccept = async (id: string, price:string)  {
-
-  // }
+  const queryClient = useQueryClient();
+  const updatePricing = useMutation(
+    trpc.bookings.updatePrice.mutationOptions({
+      onSuccess: async () => {
+        await queryClient.invalidateQueries(
+          trpc.bookings.getMany.queryOptions()
+        );
+      },
+      onError: (err) => {
+        console.error("Mutation error:", err);
+      },
+    })
+  );
+  const updateStatus = useMutation(
+    trpc.bookings.updateStatus.mutationOptions({
+      onSuccess: async () => {
+        await queryClient.invalidateQueries(
+          trpc.bookings.getMany.queryOptions()
+        );
+      },
+      onError: (err) => {
+        console.error("Mutation error:", err);
+      },
+    })
+  );
+  const onAccept = async (id: string, price: string) => {
+    updatePricing.mutate({ id, price });
+    updateStatus.mutate({ id, status: "Accepted" });
+  };
+  const onReject = async (id: string, price: string) => {
+    updatePricing.mutate({ id, price });
+    updateStatus.mutate({ id, status: "Rejected" });
+  };
+  const onComplete = async (id: string) => {
+    updateStatus.mutate({ id, status: "Completed" });
+  };
   data.forEach((d) => {
     if (d.status == "Requested") {
       request_data.push(d);
     } else if (d.status == "Completed") {
       completed_data.push(d);
-    } else if (d.status == "Pending") {
+    } else if (d.status == "Accepted") {
       pending_data.push(d);
     }
   });
   const [activeTab, setActiveTab] = useState<
-    "Requests" | "Pending" | "Completed"
+    "Requests" | "Accepted" | "Completed"
   >("Requests");
 
   if (isLoading) return <div className="p-6">Loading bookings...</div>;
@@ -38,7 +75,7 @@ export default function AdminBookingView() {
     <div className="flex flex-col">
       {/* Navigation Bar */}
       <div className="flex w-full bg-gray-100 shadow-md">
-        {["Requests", "Pending", "Completed"].map((tab) => (
+        {["Requests", "Accepted", "Completed"].map((tab) => (
           <div
             key={tab}
             className={`flex-1 text-center py-4 cursor-pointer font-semibold transition-colors ${
@@ -60,28 +97,34 @@ export default function AdminBookingView() {
             {request_data?.length === 0 && <p>No requests.</p>}
             {request_data?.map((booking) => (
               <BookCard
-                key={booking.name}
+                key={booking.id}
+                id={booking.id}
                 type="request"
                 name={booking.name}
                 service={booking.typeOfService}
                 date={booking.date}
-                // onAccept, onReject handlers here
+                onAccept={onAccept}
+                onReject={onReject}
+                onComplete={() => {}}
               />
             ))}
           </div>
         )}
-        {activeTab === "Pending" && (
+        {activeTab === "Accepted" && (
           <div>
             <h2 className="text-xl font-bold mb-2">Pending</h2>
             {pending_data?.length === 0 && <p>No pending bookings.</p>}
             {pending_data?.map((booking) => (
               <BookCard
-                key={booking.name}
+                key={booking.id}
+                id={booking.id}
                 type="pending"
                 name={booking.name}
                 service={booking.typeOfService}
                 date={booking.date}
-                // onComplete handler here
+                onAccept={() => {}}
+                onReject={() => {}}
+                onComplete={onComplete}
               />
             ))}
           </div>
@@ -92,11 +135,15 @@ export default function AdminBookingView() {
             {completed_data?.length === 0 && <p>No completed bookings.</p>}
             {completed_data?.map((booking) => (
               <BookCard
-                key={booking.name}
+                key={booking.id}
+                id={booking.id}
                 type="completed"
                 name={booking.name}
                 service={booking.typeOfService}
                 date={booking.date}
+                onAccept={() => {}}
+                onReject={() => {}}
+                onComplete={() => {}}
               />
             ))}
           </div>

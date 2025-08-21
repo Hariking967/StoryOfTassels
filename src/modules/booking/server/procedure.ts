@@ -46,4 +46,19 @@ export const bookingRouter = createTRPCRouter({
         .returning();
       return updatedBooking;
     }),
+  updateStatus: protectedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        status: z.string().min(1, "Status is required"),
+      })
+    )
+    .mutation(async ({ input }) => {
+      const [updatedBooking] = await db
+        .update(bookings)
+        .set({ status: input.status })
+        .where(eq(bookings.id, input.id))
+        .returning();
+      return updatedBooking;
+    }),
 });
