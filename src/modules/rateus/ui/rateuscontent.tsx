@@ -18,11 +18,7 @@ import {
 } from "@/components/ui/form";
 import { Alert, AlertTitle } from "@/components/ui/alert";
 import { OctagonAlertIcon } from "lucide-react";
-import {
-  useMutation,
-  useQueryClient,
-  useSuspenseQuery,
-} from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTRPC } from "@/trpc/client";
 
 const reviewSchema = z.object({
@@ -33,21 +29,11 @@ const reviewSchema = z.object({
   review: z.string().min(3, "Message must be at least 3 characters"),
 });
 
-export default function ReviewForm() {
+export default function RateUsContent() {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const trpc = useTRPC();
   const queryClient = useQueryClient();
-  const { data: reviews } = useSuspenseQuery(
-    trpc.reviews.getMany.queryOptions()
-  );
-
-  type reviewType = {
-    id: string;
-    name: string;
-    stars: string;
-    review: string;
-  };
 
   const form = useForm<z.infer<typeof reviewSchema>>({
     resolver: zodResolver(reviewSchema),
