@@ -589,11 +589,21 @@ export default function BookingForm() {
     })
   );
 
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
     createBooking.mutate({
       ...values,
       loggedin_email: session?.user.email ?? "nosession@gmail.com",
       price: "--", // backend will update later
+    });
+    await fetch("/api/mail", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        from: process.env.TESTING_ADMIN_EMAIL,
+        to: process.env.TESTING_ADMIN_EMAIL,
+        subject: "NEW BOOKING!",
+        body: `Booked by: ${values.name}\n for: ${values.typeOfService}\n on: ${values.date}\nContact: ${values.phoneNumber}\n Email: ${values.email}`,
+      }),
     });
   };
 

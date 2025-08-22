@@ -5,19 +5,33 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { useState } from "react";
 
+type Bking = {
+  date: string;
+  id: string;
+  name: string;
+  email: string;
+  phoneNumber: string;
+  loggedin_email: string;
+  typeOfService: string;
+  status: string;
+  price: string;
+};
+
 interface Props {
+  bking: Bking;
   id: string;
   type: "completed" | "pending" | "request";
   name: string;
   service: string;
   date: string;
   price?: string;
-  onAccept: (id: string, price: string) => void;
-  onReject: (id: string, price: string) => void;
-  onComplete: (id: string) => void;
+  onAccept: (id: string, price: string, booking: Bking) => void;
+  onReject: (id: string, price: string, booking: Bking) => void;
+  onComplete: (id: string, booking: Bking) => void;
 }
 
 export default function BookCard({
+  bking,
   id,
   type,
   name,
@@ -62,14 +76,14 @@ export default function BookCard({
             <Button
               variant="outline"
               className="border-green-600 text-green-700 hover:bg-green-50"
-              onClick={() => onAccept(id, inputprice)}
+              onClick={() => onAccept(id, inputprice, bking)}
             >
               Accept
             </Button>
             <Button
               variant="outline"
               className="border-red-600 text-red-700 hover:bg-red-50 mr-2 ml-2"
-              onClick={() => onReject(id, inputprice)}
+              onClick={() => onReject(id, inputprice, bking)}
             >
               Reject
             </Button>
@@ -79,7 +93,7 @@ export default function BookCard({
           <Button
             variant="outline"
             className="border-yellow-600 text-yellow-700 hover:bg-yellow-50"
-            onClick={() => onComplete(id)}
+            onClick={() => onComplete(id, bking)}
           >
             Completed
           </Button>

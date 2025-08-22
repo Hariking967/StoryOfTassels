@@ -8,8 +8,22 @@ import {
   useQueryClient,
   useSuspenseQuery,
 } from "@tanstack/react-query";
+import { authClient } from "@/lib/auth-client";
+
+type Bking = {
+  date: string;
+  id: string;
+  name: string;
+  email: string;
+  phoneNumber: string;
+  loggedin_email: string;
+  typeOfService: string;
+  status: string;
+  price: string;
+};
 
 export default function AdminBookingView() {
+  const { data: session } = authClient.useSession();
   const trpc = useTRPC();
   const { data, isLoading, error } = useSuspenseQuery(
     trpc.bookings.getMany.queryOptions()
@@ -43,16 +57,90 @@ export default function AdminBookingView() {
       },
     })
   );
-  const onAccept = async (id: string, price: string) => {
+  const onAccept = async (id: string, price: string, booking: Bking) => {
     updatePricing.mutate({ id, price });
     updateStatus.mutate({ id, status: "Accepted" });
+    await fetch("/api/mail", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        from: process.env.TESTING_ADMIN_EMAIL,
+        to: session?.user.email,
+        subject: "Your Order Confirmation",
+        body: `
+Dear ${session?.user.name || "Customer"},
+
+We’re happy to let you know that your booking has been **accepted**! 🎉  
+
+**Booking Details:**  
+- Service: ${booking.typeOfService}  
+- Date: ${booking.date}  
+- Price: ${price}  
+
+We look forward to serving you. If you have any questions, feel free to reply to this email.  
+
+Warm regards,  
+Team Story of Tassels  
+`,
+      }),
+    });
   };
-  const onReject = async (id: string, price: string) => {
+  const onReject = async (id: string, price: string, booking: Bking) => {
     updatePricing.mutate({ id, price });
     updateStatus.mutate({ id, status: "Rejected" });
+    await fetch("/api/mail", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        from: process.env.TESTING_ADMIN_EMAIL,
+        to: session?.user.email,
+        subject: "Sorry order failed",
+        body: `
+Dear ${session?.user.name || "Customer"},
+
+Unfortunately, we are unable to fulfill your booking at the requested time.  
+
+**Booking Details:**  
+- Service: ${booking.typeOfService}  
+- Date: ${booking.date}  
+
+We sincerely apologize for the inconvenience. Please feel free to try booking another time—we’d love to serve you then.  
+
+Thank you for your understanding.  
+
+Warm regards,  
+Team Story of Tassels  
+`,
+      }),
+    });
   };
-  const onComplete = async (id: string) => {
+  const onComplete = async (id: string, booking: Bking) => {
     updateStatus.mutate({ id, status: "Completed" });
+    await fetch("/api/mail", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        from: process.env.TESTING_ADMIN_EMAIL,
+        to: session?.user.email,
+        subject: "Your Order Completed",
+        body: `
+Dear ${session?.user.name || "Customer"},
+
+We’re delighted to inform you that your booking has been **successfully completed**. 🎉  
+
+**Booking Details:**  
+- Service: ${booking.typeOfService}  
+- Date: ${booking.date}  
+
+We truly appreciate your trust in us. Kindly take a moment to rate your experience on our website—it helps us grow and serve you better.  
+
+Looking forward to seeing you again!  
+
+Warm regards,  
+Team Story of Tassels  
+`,
+      }),
+    });
   };
   data.forEach((d) => {
     if (d.status == "Requested") {
@@ -98,6 +186,7 @@ export default function AdminBookingView() {
             {request_data?.map((booking) => (
               <BookCard
                 key={booking.id}
+                bking={booking}
                 id={booking.id}
                 type="request"
                 name={booking.name}
@@ -117,6 +206,7 @@ export default function AdminBookingView() {
             {pending_data?.map((booking) => (
               <BookCard
                 key={booking.id}
+                bking={booking}
                 id={booking.id}
                 type="pending"
                 name={booking.name}
@@ -136,6 +226,7 @@ export default function AdminBookingView() {
             {completed_data?.map((booking) => (
               <BookCard
                 key={booking.id}
+                bking={booking}
                 id={booking.id}
                 type="completed"
                 name={booking.name}
