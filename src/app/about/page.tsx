@@ -31,7 +31,7 @@ export default function AboutPage() {
         <p>
           Phone:{" "}
           <a href="tel:+911234567890" className="underline">
-            +91 123 456 7890
+            0450 140 357
           </a>
         </p>
         <p>Address: 123 Celebration Street, Party City, India</p>

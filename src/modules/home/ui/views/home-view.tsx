@@ -1,28 +1,29 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { authClient } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { useState } from "react";
 import { cn } from "@/lib/utils";
 
 export default function HomeView() {
   const router = useRouter();
-  const { data, isPending } = authClient.useSession();
+  const { data } = authClient.useSession();
   const [home, setHome] = useState(1);
   const [about, setAbout] = useState(0);
   const [book, setBook] = useState(0);
-  const sample = 1;
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+
   return (
     <div>
-      <div className="flex items-center justify-between px-4 py-0 fixed top-0 left-0 w-full h-10 bg-white z-50 shadow">
-        <div className="flex">
+      <div className="flex items-center justify-between px-2 md:px-4 py-0 fixed top-0 left-0 w-full h-14 bg-white z-50 shadow">
+        {/* Nav Links */}
+        <div className="flex gap-1 md:gap-3">
           <Link
             className={cn(
-              "text-2xl font-semibold px-4 rounded-[7px]",
-              home === 1 && "bg-[#eac24b]"
+              "text-base md:text-lg font-bold px-3 md:px-5 py-2 rounded-[10px] transition-colors duration-200 hover:bg-[#ffe9a7] hover:text-[#bfa12e] focus:outline-none focus:ring-2 focus:ring-[#eac24b]",
+              home === 1 && "bg-[#eac24b] text-white shadow"
             )}
             href="/"
             onClick={() => {
@@ -35,8 +36,8 @@ export default function HomeView() {
           </Link>
           <Link
             className={cn(
-              "text-2xl font-semibold px-4 rounded-[7px]",
-              about === 1 && "bg-[#eac24b]"
+              "text-base md:text-lg font-bold px-3 md:px-5 py-2 rounded-[10px] transition-colors duration-200 hover:bg-[#ffe9a7] hover:text-[#bfa12e] focus:outline-none focus:ring-2 focus:ring-[#eac24b]",
+              about === 1 && "bg-[#eac24b] text-white shadow"
             )}
             href="/about"
             onClick={() => {
@@ -49,8 +50,8 @@ export default function HomeView() {
           </Link>
           <Link
             className={cn(
-              "text-2xl font-semibold px-4 rounded-[7px]",
-              book === 1 && "bg-[#eac24b]"
+              "text-base md:text-lg font-bold px-3 md:px-5 py-2 rounded-[10px] transition-colors duration-200 hover:bg-[#ffe9a7] hover:text-[#bfa12e] focus:outline-none focus:ring-2 focus:ring-[#eac24b]",
+              book === 1 && "bg-[#eac24b] text-white shadow"
             )}
             href="/booking"
             onClick={() => {
@@ -62,17 +63,32 @@ export default function HomeView() {
             Booking
           </Link>
         </div>
-        <div className="flex items-center">
-          <p className="font-semibold text-2xl px-4">{data?.user.name}</p>
-          <Button
-            onClick={() => {
-              authClient.signOut({
-                fetchOptions: { onSuccess: () => router.push("/auth/sign-in") },
-              });
-            }}
+
+        {/* Username with Dropdown */}
+        <div className="relative">
+          <p
+            onClick={() => setDropdownOpen(!dropdownOpen)}
+            className="cursor-pointer font-bold text-base md:text-lg px-3 md:px-4 text-[#bfa12e] bg-[#fff8e1] rounded-[8px] py-1 shadow"
           >
-            Logout
-          </Button>
+            {data?.user.name}
+          </p>
+
+          {dropdownOpen && (
+            <div className="absolute right-0 mt-2 w-40 bg-white shadow-lg rounded-lg border p-2">
+              <Button
+                className="w-full text-left text-red-600 hover:bg-red-100 px-3 py-2 rounded-md"
+                onClick={() => {
+                  authClient.signOut({
+                    fetchOptions: {
+                      onSuccess: () => router.push("/auth/sign-in"),
+                    },
+                  });
+                }}
+              >
+                Logout
+              </Button>
+            </div>
+          )}
         </div>
       </div>
     </div>

@@ -1,4 +1,11 @@
-import { pgTable, text, timestamp, boolean, date } from "drizzle-orm/pg-core";
+import {
+  pgTable,
+  text,
+  timestamp,
+  boolean,
+  integer,
+  pgEnum,
+} from "drizzle-orm/pg-core";
 import { nanoid } from "nanoid";
 
 export const user = pgTable("user", {
@@ -81,4 +88,18 @@ export const bookings = pgTable("bookings", {
   date: text("date").notNull(),
   status: text("status").notNull().default("Requested"),
   price: text("price").notNull(),
+});
+
+export const starEnum = pgEnum("stars", ["1", "2", "3", "4", "5"]);
+
+export const reviews = pgTable("reviews", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => nanoid()),
+  name: text("name").notNull(),
+  stars: starEnum("stars").notNull(),
+  review: text("review").notNull(),
+  createdAt: timestamp("created_at")
+    .$defaultFn(() => /* @__PURE__ */ new Date())
+    .notNull(),
 });

@@ -684,7 +684,17 @@ export default function BookingForm() {
               )}
               <div className="ml-8">
                 <span className="px-3 py-1 rounded bg-gray-100 text-gray-800 text-sm font-medium">
-                  {d.status}
+                  {d.status === "Completed" ? (
+                    <Button
+                      size="sm"
+                      className="ml-2"
+                      onClick={() => router.push("/rateus")}
+                    >
+                      Rate
+                    </Button>
+                  ) : (
+                    d.status
+                  )}
                 </span>
               </div>
             </Card>
