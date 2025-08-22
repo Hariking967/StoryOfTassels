@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { ChevronDownIcon } from "lucide-react";
 
 export default function HomeView() {
   const router = useRouter();
@@ -66,12 +67,14 @@ export default function HomeView() {
 
         {/* Username with Dropdown */}
         <div className="relative">
-          <p
+          <button
             onClick={() => setDropdownOpen(!dropdownOpen)}
-            className="cursor-pointer font-bold text-base md:text-lg px-3 md:px-4 text-[#bfa12e] bg-[#fff8e1] rounded-[8px] py-1 shadow"
+            className="flex items-center gap-1 cursor-pointer font-bold text-base md:text-lg px-3 md:px-4 text-[#bfa12e] bg-[#fff8e1] rounded-[8px] py-1 shadow"
+            type="button"
           >
-            {data?.user.name}
-          </p>
+            <span>{data?.user.name}</span>
+            <ChevronDownIcon />
+          </button>
 
           {dropdownOpen && (
             <div className="absolute right-0 mt-2 w-40 bg-white shadow-lg rounded-lg border p-2">

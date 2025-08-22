@@ -5,6 +5,7 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import AdminBookingView from "@/modules/booking/ui/admin-booking-view";
 import { Suspense } from "react";
+import HomeView from "@/modules/home/ui/views/home-view";
 
 export default async function BookingPage() {
   const session = await auth.api.getSession({
@@ -23,10 +24,18 @@ export default async function BookingPage() {
   // return <BookingForm />;
   if (session.user.email == "supriya.pdy@gmail.com") {
     return (
-      <Suspense fallback={<div>Loading bookings...</div>}>
-        <AdminBookingView />
-      </Suspense>
+      <>
+        <HomeView />
+        <Suspense fallback={<div>Loading bookings...</div>}>
+          <AdminBookingView />
+        </Suspense>
+      </>
     );
   }
-  return <BookingForm />;
+  return (
+    <>
+      <HomeView />
+      <BookingForm />
+    </>
+  );
 }

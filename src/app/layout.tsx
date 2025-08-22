@@ -35,7 +35,6 @@ export default function RootLayout({
         <body
           className={`${geistSans.variable} ${geistMono.variable} antialiased mt-10`}
         >
-          <HomeView />
           {children}
         </body>
       </html>
