@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { authClient } from "@/lib/auth-client";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
@@ -10,10 +10,8 @@ import { ChevronDownIcon } from "lucide-react";
 
 export default function HomeView() {
   const router = useRouter();
+  const pathname = usePathname(); // 👈 current route
   const { data } = authClient.useSession();
-  const [home, setHome] = useState(1);
-  const [about, setAbout] = useState(0);
-  const [book, setBook] = useState(0);
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
   return (
@@ -22,44 +20,29 @@ export default function HomeView() {
         {/* Nav Links */}
         <div className="flex gap-1 md:gap-3">
           <Link
-            className={cn(
-              "text-base md:text-lg font-bold px-3 md:px-5 py-2 rounded-[10px] transition-colors duration-200 hover:bg-[#ffe9a7] hover:text-[#bfa12e] focus:outline-none focus:ring-2 focus:ring-[#eac24b]",
-              home === 1 && "bg-[#eac24b] text-white shadow"
-            )}
             href="/"
-            onClick={() => {
-              setHome(1);
-              setBook(0);
-              setAbout(0);
-            }}
+            className={cn(
+              "text-base md:text-lg font-bold px-3 md:px-5 py-2 rounded-[10px] transition-colors duration-200 hover:bg-[#ffe9a7] hover:text-[#bfa12e]",
+              pathname === "/" && "bg-[#eac24b] text-white shadow"
+            )}
           >
             Home
           </Link>
           <Link
-            className={cn(
-              "text-base md:text-lg font-bold px-3 md:px-5 py-2 rounded-[10px] transition-colors duration-200 hover:bg-[#ffe9a7] hover:text-[#bfa12e] focus:outline-none focus:ring-2 focus:ring-[#eac24b]",
-              about === 1 && "bg-[#eac24b] text-white shadow"
-            )}
             href="/about"
-            onClick={() => {
-              setHome(0);
-              setBook(0);
-              setAbout(1);
-            }}
+            className={cn(
+              "text-base md:text-lg font-bold px-3 md:px-5 py-2 rounded-[10px] transition-colors duration-200 hover:bg-[#ffe9a7] hover:text-[#bfa12e]",
+              pathname === "/about" && "bg-[#eac24b] text-white shadow"
+            )}
           >
             About
           </Link>
           <Link
-            className={cn(
-              "text-base md:text-lg font-bold px-3 md:px-5 py-2 rounded-[10px] transition-colors duration-200 hover:bg-[#ffe9a7] hover:text-[#bfa12e] focus:outline-none focus:ring-2 focus:ring-[#eac24b]",
-              book === 1 && "bg-[#eac24b] text-white shadow"
-            )}
             href="/booking"
-            onClick={() => {
-              setHome(0);
-              setBook(1);
-              setAbout(0);
-            }}
+            className={cn(
+              "text-base md:text-lg font-bold px-3 md:px-5 py-2 rounded-[10px] transition-colors duration-200 hover:bg-[#ffe9a7] hover:text-[#bfa12e]",
+              pathname === "/booking" && "bg-[#eac24b] text-white shadow"
+            )}
           >
             Booking
           </Link>

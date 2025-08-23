@@ -599,7 +599,7 @@ export default function BookingForm() {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        from: process.env.TESTING_ADMIN_EMAIL,
+        from: "onboarding@resend.dev",
         to: process.env.TESTING_ADMIN_EMAIL,
         subject: "NEW BOOKING!",
         body: `Booked by: ${values.name}\n for: ${values.typeOfService}\n on: ${values.date}\nContact: ${values.phoneNumber}\n Email: ${values.email}`,
