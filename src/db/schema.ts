@@ -86,8 +86,12 @@ export const bookings = pgTable("bookings", {
   email: text("email").notNull(),
   typeOfService: text("typeOfService").notNull(),
   date: text("date").notNull(),
+  description: text("description").notNull(),
   status: text("status").notNull().default("Requested"),
   price: text("price").notNull(),
+  createdAt: timestamp("created_at")
+    .$defaultFn(() => /* @__PURE__ */ new Date())
+    .notNull(),
 });
 
 export const starEnum = pgEnum("stars", ["1", "2", "3", "4", "5"]);
