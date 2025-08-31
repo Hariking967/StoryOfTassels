@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { useTRPC } from "@/trpc/client";
-import BookCard from "./book-card";
+import BookingsTabs from "./book-card";
 import {
   useMutation,
   useQueryClient,
@@ -21,7 +21,7 @@ type Bking = {
   status: string;
   price: string;
   description: string;
-  createdAt: string; // Added createdAt
+  createdAt: string;
 };
 
 export default function AdminBookingView() {
@@ -30,10 +30,6 @@ export default function AdminBookingView() {
   const { data, isLoading, error } = useSuspenseQuery(
     trpc.bookings.getMany.queryOptions()
   );
-  type bookType = typeof data;
-  const completed_data: bookType = [];
-  const request_data: bookType = [];
-  const pending_data: bookType = [];
   const queryClient = useQueryClient();
 
   const updatePricing = useMutation(
@@ -61,17 +57,17 @@ export default function AdminBookingView() {
     })
   );
 
-  // Handler signatures now match BookCard expectations
   const onAccept = async (id: string, price: string, booking: Bking) => {
-    updatePricing.mutate({ id, price });
-    updateStatus.mutate({ id, status: "Accepted" });
-    await fetch("https://emailbackend-e1gi.onrender.com/send-email", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        to: booking.email,
-        subject: "Your Order Confirmation",
-        body: `
+    try {
+      const res = await fetch(
+        "https://emailbackend-e1gi.onrender.com/send-email",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            to: booking.email,
+            subject: "Your Order Confirmation",
+            body: `
 Dear ${booking.email || "Customer"},
 We’re happy to let you know that your booking has been **accepted**! 🎉  
 
@@ -85,20 +81,30 @@ We look forward to serving you. If you have any questions, feel free to reply to
 Warm regards,  
 Team Story of Tassels  
 `,
-      }),
-    });
+          }),
+        }
+      );
+      if (!res.ok) {
+        throw new Error(`Request failed`);
+      }
+    } catch (err) {
+      console.error("Failed to send accept email:", err);
+    }
+    updatePricing.mutate({ id, price });
+    updateStatus.mutate({ id, status: "Accepted" });
   };
 
   const onReject = async (id: string, price: string, booking: Bking) => {
-    updatePricing.mutate({ id, price });
-    updateStatus.mutate({ id, status: "Rejected" });
-    await fetch("https://emailbackend-e1gi.onrender.com/send-email", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        to: booking.email,
-        subject: "Sorry order failed",
-        body: `
+    try {
+      const res = await fetch(
+        "https://emailbackend-e1gi.onrender.com/send-email",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            to: booking.email,
+            subject: "Sorry order failed",
+            body: `
 Dear ${booking.email || "Customer"},
 
 Unfortunately, we are unable to fulfill your booking at the requested time.  
@@ -114,19 +120,30 @@ Thank you for your understanding.
 Warm regards,  
 Team Story of Tassels  
 `,
-      }),
-    });
+          }),
+        }
+      );
+      if (!res.ok) {
+        throw new Error(`Request failed`);
+      }
+    } catch (err) {
+      console.error("Failed to send reject email:", err);
+    }
+    updatePricing.mutate({ id, price });
+    updateStatus.mutate({ id, status: "Rejected" });
   };
 
   const onComplete = async (id: string, booking: Bking) => {
-    updateStatus.mutate({ id, status: "Completed" });
-    await fetch("https://emailbackend-e1gi.onrender.com/send-email", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        to: booking.email,
-        subject: "Your Order Completed",
-        body: `
+    try {
+      const res = await fetch(
+        "https://emailbackend-e1gi.onrender.com/send-email",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            to: booking.email,
+            subject: "Your Order Completed",
+            body: `
 Dear ${booking.email || "Customer"},
 
 We’re delighted to inform you that your booking has been **successfully completed**. 🎉  
@@ -142,23 +159,17 @@ Looking forward to seeing you again!
 Warm regards,  
 Team Story of Tassels  
 `,
-      }),
-    });
-  };
-
-  data.forEach((d) => {
-    if (d.status === "Requested") {
-      request_data.push(d);
-    } else if (d.status === "Completed") {
-      completed_data.push(d);
-    } else if (d.status === "Accepted") {
-      pending_data.push(d);
+          }),
+        }
+      );
+      if (!res.ok) {
+        throw new Error(`Request failed`);
+      }
+    } catch (err) {
+      console.error("Failed to send completion email:", err);
     }
-  });
-
-  const [activeTab, setActiveTab] = useState<
-    "Requests" | "Accepted" | "Completed"
-  >("Requests");
+    updateStatus.mutate({ id, status: "Completed" });
+  };
 
   if (isLoading) return <div className="p-6">Loading bookings...</div>;
   if (error)
@@ -166,50 +177,12 @@ Team Story of Tassels
 
   return (
     <div className="p-6">
-      <h2 className="text-2xl font-bold mb-4">Booking Requests</h2>
-      {request_data.map((booking) => (
-        <BookCard
-          key={booking.id}
-          bking={booking}
-          id={booking.id}
-          type="request"
-          name={booking.name}
-          service={booking.typeOfService}
-          date={booking.date}
-          price={booking.price}
-          onAccept={(id, price) => onAccept(id, price, booking)}
-          onReject={(id, price) => onReject(id, price, booking)}
-        />
-      ))}
-
-      <h2 className="text-2xl font-bold mt-8 mb-4">Accepted</h2>
-      {pending_data.map((booking) => (
-        <BookCard
-          key={booking.id}
-          bking={booking}
-          id={booking.id}
-          type="accepted"
-          name={booking.name}
-          service={booking.typeOfService}
-          date={booking.date}
-          price={booking.price}
-          onComplete={(id) => onComplete(id, booking)}
-        />
-      ))}
-
-      <h2 className="text-2xl font-bold mt-8 mb-4">Completed</h2>
-      {completed_data.map((booking) => (
-        <BookCard
-          key={booking.id}
-          bking={booking}
-          id={booking.id}
-          type="completed"
-          name={booking.name}
-          service={booking.typeOfService}
-          date={booking.date}
-          price={booking.price}
-        />
-      ))}
+      <BookingsTabs
+        bookings={data}
+        onAccept={onAccept}
+        onReject={onReject}
+        onComplete={onComplete}
+      />
     </div>
   );
 }
